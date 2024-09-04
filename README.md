@@ -10,3 +10,5 @@
 Чтобы запустить проект воспользуйтесь коммандой ```docker-compose up -d``` . Если вы работаете на Windows, то запустите файл ```start.bat```
 
 В проекте используются: Python (Jupyter Lab), PostgreSQL, InfluxDB, QuestDB, pgAdmin
+
+После запуска проекта переходите по адресу: ```http://localhost:8888/``` или ```http://localhost:8888/lab/tree/market_data.ipynb``` чтобы начать работу с Jupyter Notebook, который представлен в работе. 
