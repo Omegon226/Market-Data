@@ -1,0 +1,111 @@
+version: "3.9"
+
+services:
+  # Контейнер с Python и JupyterLab серваком
+  jupyter-lab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./:/home/jovyan/work
+    networks:
+      - docker_network
+
+  # БД для тестирования
+  postgres:
+    image: postgres:16.3-alpine
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+      - "8010:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - docker_network
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    restart: unless-stopped
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=12345678
+      - DOCKER_INFLUXDB_INIT_ORG=admin
+      - DOCKER_INFLUXDB_INIT_BUCKET=admin
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=admin
+    ports:
+      # HTTP API
+      - "8012:8086"  
+      # InfluxDB UI
+      - "8013:8088"  
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    networks:
+      - docker_network
+
+  questdb:
+    image: questdb/questdb
+    container_name: questdb
+    restart: unless-stopped
+    ports:
+      - 8014:9000
+      # UI
+      - 8015:9009
+      - 8016:8812
+      - 8017:9003
+    volumes:
+      - questdb:/root/.questdb
+    environment:
+      - QDB_LOG_W_STDOUT_LEVEL=ERROR
+      - QDB_LOG_W_FILE_LEVEL=ERROR
+      - QDB_LOG_W_HTTP_MIN_LEVEL=ERROR
+      - QDB_SHARED_WORKER_COUNT=2 # Amount of worker threads
+      - QDB_PG_USER=questdb # postgresql user 
+      - QDB_PG_PASSWORD=questdb # postgresql password 
+      - QDB_TELEMETRY_ENABLED=false # Disable telemetry
+    networks:
+      - docker_network
+
+  # Консоль администрирования для Postgre
+  pgadmin:
+    image: dpage/pgadmin4:8.6
+    restart: unless-stopped
+    ports:
+      - "8020:80"
+    volumes:
+      # Сохранение инфы в volumes
+      - pgadmin_data:/var/lib/pgadmin 
+      # Автоматическая подгрузка информации
+      - ./pgadmin_config/servers.json:/pgadmin4/servers.json
+      - ./pgadmin_config/pgpass:/pgpass
+    environment:
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadminpassword
+    depends_on:
+      - postgres
+    #  - timescaledb
+    networks:
+      - docker_network
+
+volumes:
+  postgres_data:
+    driver: local
+  influxdb_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+  questdb:
+    driver: local
+
+networks:
+  docker_network:
+    driver: bridge
+  

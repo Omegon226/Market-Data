@@ -1,0 +1,15 @@
+numpy
+pandas
+matplotlib
+mplfinance
+plotly
+scikit-learn
+yfinance
+ccxt
+sqlalchemy 
+psycopg2
+psycopg2-binary
+influxdb-client
+questdb[dataframe]
+tables
+pyarrow

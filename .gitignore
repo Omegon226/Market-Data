@@ -1,0 +1,12 @@
+.ipynb_checkpoints/
+
+btc_1d.csv
+btc_1d.h5
+btc_1d.hdf
+btc_1d.json
+btc_1d.xml
+btc_1d.feather
+btc_1d.orc
+btc_1d.parquet
+btc_1d.pickle
+btc_1d.stata
