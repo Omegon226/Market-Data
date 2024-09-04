@@ -30,7 +30,7 @@ services:
       - docker_network
 
   influxdb:
-    image: influxdb:latest
+    image: influxdb:2.7.10
     container_name: influxdb
     restart: unless-stopped
     environment:
@@ -51,7 +51,7 @@ services:
       - docker_network
 
   questdb:
-    image: questdb/questdb
+    image: questdb/questdb:8.1.0
     container_name: questdb
     restart: unless-stopped
     ports:
